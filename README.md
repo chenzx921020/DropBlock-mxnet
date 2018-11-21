@@ -9,12 +9,12 @@ self.block_mask = nd.ones((256, 48, 7, 7)) # mask size:(batch_size,channel,mask_
 ``` 
 
 ## operator implementation
-In my experiment, feature map size is 7, so I choose drop probability for 0.5 and block size for 3.
+In my experiment, feature map size is 7, the schedule for drop block probability has been finished, you can set step and prob range in operator.
 ```
-drop_layer = mx.sym.Custom(conv5,drop_prob=0.5,block_size=3 ,op_type = 'DropBlock')
+drop_layer = mx.sym.Custom(conv5,drop_prob=0.0,block_size=3,drop_prob_max=0.3,step=15000,block_factor_prob = 0.04 ,op_type = 'DropBlock')
 ```
+For different task, maybe you need to try different parameters for many times.
 
 # TODO
-> Scheduled DropBlock
 
 > DropBlock for 3D convolution
