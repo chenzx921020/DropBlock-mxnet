@@ -11,7 +11,7 @@ class DropBlock(mx.operator.CustomOp):
         super(DropBlock, self).__init__()
         self.drop_prob = drop_prob
         self.block_size = block_size
-	self.block_mask = nd.ones((256,48,7,7),ctx=mx.gpu(2))
+        self.block_mask = nd.ones((256,48,7,7),ctx=mx.gpu(2))
 	self.iteration = 0
 	self.block_prob_max = drop_prob_max
 	self.block_factor_prob = block_factor_prob
@@ -28,20 +28,20 @@ class DropBlock(mx.operator.CustomOp):
 	   else:
 		self.drop_prob = self.block_prob_max
 	# get gamma value
-	gamma = self._compute_gamma( data.shape[1])
-	#print gamma
-	# sample from mask
-	mask_reduction = self.block_size // 2
-	mask_height = data.shape[2] - mask_reduction * 2 
-	mask_width = data.shape[3] - mask_reduction * 2 
-	mask_area = mask_height * mask_width
+	gamma = self._compute_gamma(data.shape[1])
+        mask_reduction = self.block_size // 2
+	
+        if (self.block_size%2) != 0:
+           mask_height = data.shape[2] - mask_reduction * 2
+           mask_width = data.shape[3] - mask_reduction * 2
+        if (self.block_size%2) == 0:
+           mask_height = data.shape[2] - mask_reduction * 2 + 1
+           mask_width = data.shape[3] - mask_reduction * 2 + 1
+	
+        mask_area = mask_height * mask_width
 	n = int(mask_area * gamma)
 	a = np.arange(0,mask_area)
-	#b = random.sample(a,n)
-	#print in_data[0].shape
 	mask = nd.zeros((data.shape[0],1, mask_area))
-	#print mask.shape
-	
 	for i in range(0,data.shape[0]):
 	    b = random.sample(a,n)
 	    for j in b:
